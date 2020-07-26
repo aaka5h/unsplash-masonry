@@ -21,10 +21,10 @@ export class LatestPhotos extends Component {
   }
 
   loadPhotos = () => {
-    const { photos , page } = this.state;
+    const { photos, page } = this.state;
     this.unsplash.photos.getPhotos(page + 1)
       .then((data) => {
-        console.log(data);
+        console.log('api data:',data);
         this.setState({
           photos: [...photos, ...data],
           // is this safe to use previous state like this??
@@ -40,7 +40,7 @@ export class LatestPhotos extends Component {
     const { photos } = this.state;
     return (
       <>
-      <PhotoGrid photos={photos}></PhotoGrid>
+        <PhotoGrid photos={photos}></PhotoGrid>
         <button onClick={this.loadMore}>Load more</button>
       </>
     )

@@ -1,13 +1,23 @@
 import React from 'react';
-export const PhotoCard = (props) => {
-  const { photo } = props;
+import cssClasses from './PhotoCard.module.scss';
+import { Link } from 'react-router-dom';
 
-  // return <pre>{JSON.stringify(photo, 2, null)}</pre>
+
+const Photo = ({ src, alt_description: altDescription }) => {
+  return <img className={cssClasses['photo-card__img']} src={src} alt={altDescription} />
+}
+const PhotoCard = React.forwardRef((props, ref) => {
+  const { photo } = props;
+  const paddingBottom = `${(100 * photo.height) / photo.width}%`;
   return (
-    <div>
-      <a href={`photos/${photo.id}`}>
-        <img src={photo.urls.small} alt={photo.alt_description} />
-      </a>
+    <div ref={ref} className='photo-card'>
+      <Link className={cssClasses['photo-card__link']} to={`/photos/${photo.id}`}>
+        <div className={cssClasses['photo-card__img-wrapper']} style={{ paddingBottom }}>
+          <Photo src={photo.urls.small} alt={photo.alt_description} />
+        </div>
+      </Link>
     </div>
   )
-}
+})
+
+export default PhotoCard;

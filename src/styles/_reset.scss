@@ -1,0 +1,22 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  font-size: 87.5%;
+  @include device-greater-than(md) {
+    font-size: 100%;
+  }
+}
+body {
+  box-sizing: inherit;
+  color: $color-gray-1;
+  font-family: "Source Code Pro", monospace;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: linear-gradient(to top right, $color-dark-2, $color-dark-2);
+}

@@ -1,0 +1,16 @@
+/// anchor tags
+a {
+  text-decoration: none;
+  box-shadow: 0 1px 0 0 currentColor;
+  color: $color-primary;
+  transition: all .1s;
+  background-color: transparent;
+
+  &:active,
+  &:hover,
+  &:focus {
+    color: $color-gray-3; 
+    box-shadow: none;
+    background-color: $color-primary;
+  }
+}

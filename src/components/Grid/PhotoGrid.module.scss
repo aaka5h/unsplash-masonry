@@ -1,4 +1,5 @@
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(var(--columns), 1fr);
+  min-height: 100vmin;
 }
