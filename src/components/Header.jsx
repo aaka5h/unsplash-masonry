@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ReactComponent as ReactLogo } from 'react-logo.svg'
+import { ReactComponent as ReactLogo } from 'react-logo.svg';
+import { SlugAnimation } from './Animations/SlugAnimation';
 
 const photographyTypes =
   `portrait
@@ -20,24 +21,37 @@ macro photos
 astro photos
 wedding`.split('\n');
 
-console.log(photographyTypes);
-
 const getRandomString = function (strings) {
   return strings[Math.floor(Math.random() * strings.length)];
 }
+const emptySpace = ' ';
 const RandomStrings = (props) => {
-  const [content, setContent] = useState(null);
+  const [content, setContent] = useState(emptySpace);
+  const [tout, setTout] = useState(null);
   useEffect(() => {
-    setTimeout(() => {
+    if (tout) return;
+    const t = setTimeout(() => {
       setContent(getRandomString(props.strings));
-    }, 2000);
-  })
+      console.log('set time out');
+      setTout(null);
+    }, 4000);
+    setTout(t);
+  }, [content, props.strings, tout]);
   useEffect(() => {
+    console.log('second use effect');
     setContent(getRandomString(photographyTypes));
-  }, [])
+  }, []);
+
+  const chars = content && content.split('');
+  // const chars = 'aakash'.split('');
   return (
     <h2 className="sub-heading">
-      {content}
+      <SlugAnimation>
+        {chars &&
+          chars.map(
+            (char, i) => <span style={{ display: 'inline-block' }} key={`${i}-${char}`}>{char}</span>
+          )}
+      </SlugAnimation>
     </h2>
   )
 }

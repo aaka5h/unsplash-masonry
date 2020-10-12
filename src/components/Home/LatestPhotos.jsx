@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Unsplash } from 'unsplash/unsplash';
 import { PhotoGrid } from 'components/Grid/PhotoGrid';
+import { Route } from 'react-router-dom';
 
 
 export class LatestPhotos extends Component {
@@ -24,7 +25,7 @@ export class LatestPhotos extends Component {
     const { photos, page } = this.state;
     this.unsplash.photos.getPhotos(page + 1)
       .then((data) => {
-        console.log('api data:',data);
+        console.log('api data:', data);
         this.setState({
           photos: [...photos, ...data],
           // is this safe to use previous state like this??
@@ -41,6 +42,7 @@ export class LatestPhotos extends Component {
     return (
       <>
         <PhotoGrid photos={photos}></PhotoGrid>
+        <Route path="/photos/:photoId" render={() => <div>route rendered</div>}></Route>
         <button onClick={this.loadMore}>Load more</button>
       </>
     )

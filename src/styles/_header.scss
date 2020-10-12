@@ -69,6 +69,7 @@ $reveal-time: 1.2s;
     &--secondary {
       grid-area: secondary;
       @include device-greater-than(md) {
+        text-align: center;
       }
     }
   }

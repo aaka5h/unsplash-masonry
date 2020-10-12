@@ -3,14 +3,54 @@ a {
   text-decoration: none;
   box-shadow: 0 1px 0 0 currentColor;
   color: $color-primary;
-  transition: all .1s;
+  transition: all 0.1s;
   background-color: transparent;
 
   &:active,
   &:hover,
   &:focus {
-    color: $color-gray-3; 
+    color: $color-gray-3;
     box-shadow: none;
     background-color: $color-primary;
   }
+}
+
+//////////////modal
+
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.modal-wrapper {
+  display: flex;
+  position: absolute;
+
+  justify-content: center;
+  align-items: center;
+
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1000;
+  .modal {
+    position: static;
+    padding: 3rem;
+    background: $color-dark-1;
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background-color: rgba($color-dark-2, 0.6);
 }
