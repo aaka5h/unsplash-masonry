@@ -7,23 +7,35 @@ export const canUseDOM = !!(
   window.document.createElement
 );
 export class Portal extends React.Component {
+  portalNode = null;
+  container = null;
+
+  constructor(props) {
+    super(props);
+    this.container = props.container || (canUseDOM && document.body);
+  }
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    this.container = this.props.container || document.body;
+  }
 
   componentWillUnmount() {
-    if (this.defaultNode) {
-      document.body.removeChild(this.defaultNode);
+    if (this.portalNode) {
+      this.container.removeChild(this.portalNode);
     }
-    this.defaultNode = null;
+    this.portalNode = null;
   }
 
   render() {
-    if (!this.props.node && !this.defaultNode) {
-      this.defaultNode = document.createElement('div');
-      document.body.appendChild(this.defaultNode);
+    if (!this.portalNode) {
+      this.portalNode = document.createElement('div');
+      this.portalNode.classList.add('portal-node');
+      this.container.appendChild(this.portalNode);
     }
 
-    return ReactDOM.createPortal(
-      this.props.children,
-      this.props.node || this.defaultNode
-    )
+    return ReactDOM.createPortal(this.props.children, this.portalNode);
   }
 }
+
+Portal.defaultProps = {
+  container: null,
+};

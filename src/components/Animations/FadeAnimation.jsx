@@ -1,9 +1,7 @@
-
 import React from 'react';
 import { animated, Transition } from 'react-spring/renderprops';
 
-
-export const FadeAnimation = (props) => {
+export const FadeAnimation = React.forwardRef((props, ref) => {
   const {
     children,
     from = { opacity: 0 },
@@ -13,27 +11,28 @@ export const FadeAnimation = (props) => {
   } = props;
 
   const result = (styles) => {
-    const Component = animated[children.type] || animated(children.type);
+    const child = React.Children.only(children);
+    const Component = animated[child.type] || animated(child.type);
     const newProps = {
-      ...children.props,
+      ...child.props,
       style: {
         willChange: 'opacity',
-        ...children.props.style,
-        ...styles
-      }
-    }
-    return <Component {...newProps} />
-  }
-
+        ...child.props.style,
+        ...styles,
+      },
+    };
+    return <Component {...newProps} />;
+  };
 
   return (
     <Transition
+      ref={ref}
       items={result}
       from={from}
       enter={enter}
       leave={leave}
       {...rest}
-      children={child => child}
+      children={(child) => child}
     />
   );
-}
+});

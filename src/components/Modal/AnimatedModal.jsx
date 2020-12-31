@@ -1,20 +1,13 @@
-import { Portal } from 'components/Portal/Portal';
 import React from 'react';
+import Modal from './Modal';
 
-const Backdrop = () => {
-  return (<div className="modal-backdrop"></div>);
-}
-export const AnimatedModal = (props) => {
+
+export const AnimatedModal = React.forwardRef((props, ref) => {
+  const { onClose, open, children, ...rest } = props;
+  console.log('animated modal props:', props);
   return (
-    <Portal>
-      <div class="modal-container">
-        <Backdrop></Backdrop>
-        <div className="modal-wrapper">
-          <div className="modal">
-            {props.children}
-          </div>
-        </div>
-      </div>
-    </Portal>
-  )
-} 
+    <Modal ref={ref} onClose={onClose} open={open}>
+     {children}
+    </Modal>
+  );
+});
