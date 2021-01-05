@@ -15,7 +15,11 @@ const Modal = React.forwardRef((props, ref) => {
   return (
     <ModalContext.Provider value={modalContextValue}>
       <BaseModal open={open} onClose={onClose} ref={ref} {...rest}>
-        <Component className='root-modal-1'>{children}</Component>
+        <div className="modal-wrapper">
+          <Component role="dialog" ref={ref}>
+            <div className="modal">{children}</div>
+          </Component>
+        </div>
       </BaseModal>
     </ModalContext.Provider>
   );

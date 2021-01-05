@@ -47,9 +47,8 @@ class ModalTransition extends React.Component {
   currentInstance = null;
   constructor(props) {
     super(props);
-    const { transitionOnAppear } = props;
     let initialStatus;
-    if (props.in) initialStatus = STATUS.EXITED;
+    if (props.in) initialStatus = props.transitionOnAppear ? STATUS.EXITED : STATUS.ENTERED;
     else initialStatus = props.unmountOnExit ? STATUS.UNMOUNTED : STATUS.EXITED;
     this.state = {
       status: initialStatus,
@@ -60,7 +59,7 @@ class ModalTransition extends React.Component {
 
   componentDidMount() {
     console.log('transition component did mount');
-    if (this.props.in) {
+    if (this.props.in && this.props.transitionOnAppear) {
       this.startEnter(this.props);
     }
   }
@@ -90,7 +89,7 @@ class ModalTransition extends React.Component {
     }
 
     // if (false) {
-    console.log('starting start or exit');
+    console.log('starting enter or exit');
     if (this.props.in) {
       if (status === STATUS.EXITING || status === STATUS.EXITED) {
         console.log('starting on update');
@@ -146,6 +145,7 @@ class ModalTransition extends React.Component {
   }
   startEnter(props) {
     const { onEnter, onEntering, onEntered } = this.props;
+    console.log('performing enter');
     this.cancelNextCallback();
     // this gives null since there is no node to search if UNMOUNTED
     const node = this.getNode();
@@ -165,6 +165,7 @@ class ModalTransition extends React.Component {
   }
   startExit(props) {
     const { onExit, onExiting, onExited } = this.props;
+    console.log('performing exit');
     this.cancelNextCallback();
     const node = this.getNode();
     this.currentInstance = node;
@@ -197,20 +198,21 @@ class ModalTransition extends React.Component {
   }
 
   safeSetState(newState, callback) {
-    if (this.currentInstance)
-      this.setState(newState, this.setNextCallback(callback));
+    if (this.currentInstance) this.setState(newState, this.setNextCallback(callback));
   }
 
   render() {
     const status = this.state.status;
     const { children, className } = this.props;
     console.log('status during render', STATUS[status]);
+
     if (status === STATUS.UNMOUNTED) {
       return null;
     }
     const childProps = omit(this.props, Object.keys(transitionPropType));
 
     if (isFunction(children)) {
+      childProps.className = classNames(childProps.className, 'animated-class');
       return children(childProps, this.childRef);
     }
     const child = React.Children.only(children);
@@ -219,18 +221,13 @@ class ModalTransition extends React.Component {
     return React.cloneElement(child, {
       ...childProps,
       ref: this.childRef,
-      className: classNames(
-        className,
-        child.props.className,
-        'cloned-div',
-        'animated-class'
-      ),
+      className: classNames(className, child.props.className, 'animated-class'),
     });
   }
 }
 
 ModalTransition.defaultProps = {
-  transitionOnAppear: false,
+  transitionOnAppear: true,
   unmountOnExit: true,
   timeout: 300,
 };

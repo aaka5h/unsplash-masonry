@@ -1,21 +1,38 @@
 import ModalTransition from 'components/Animations/ModalTransition';
-import { Portal } from 'components/Portal/Portal';
+import Portal from 'components/Portal/Portal';
+import { canUseDOM } from 'components/Portal/Portal';
+import { usePortal } from 'components/Portal/Portal';
 import React, { useCallback } from 'react';
+
+let modalsDiv = null;
+
+if (canUseDOM) {
+  modalsDiv = document.createElement('div');
+  modalsDiv.classList.add('modal-container');
+  document.body.append(modalsDiv);
+}
 const Modal = React.forwardRef((props, ref) => {
   const {
+    as: Component,
     backdrop,
     onBackdropClick,
-    as: Component,
     open,
+    className,
     onClose,
     onEntering,
     onEntered,
     onExit,
     backdropStyles,
+    dialogTransitionTimeout,
+    transitionOnAppear,
+    backdropTransitionTimeout,
     children,
+    unmountOnExit,
+    ...rest
   } = props;
 
   const mountModal = open;
+  // const ModalPortal = usePortal({ container: modalsDiv });
 
   const handleBackdropClick = useCallback(
     (e) => {
@@ -41,20 +58,22 @@ const Modal = React.forwardRef((props, ref) => {
     };
     return (
       <ModalTransition in={open}>
-        <div {...backdropProps} aria-hidden className="modal-backdrop">
-        </div>
+        <div {...backdropProps} aria-hidden className="modal-backdrop"></div>
       </ModalTransition>
     );
   };
 
   return (
-    <Portal>
-      <Component role="dialog" ref={ref}>
+    <Portal container={modalsDiv}>
+      <Component className={className}>
         {backdrop && backdropEl()}
-        <ModalTransition in={open}>
-          <div className="modal-wrapper original">
-            <div className="modal">{children}</div>
-          </div>
+        <ModalTransition
+          unmountOnExit={unmountOnExit}
+          transitionOnAppear={transitionOnAppear}
+          timeout={300}
+          in={open}
+        >
+          {children}
         </ModalTransition>
       </Component>
     </Portal>
@@ -64,6 +83,7 @@ const Modal = React.forwardRef((props, ref) => {
 Modal.defaultProps = {
   as: 'div',
   backdrop: true,
+  dialogTransitionTimeout: 300,
 };
 
 Modal.displayName = 'OverlayModal';

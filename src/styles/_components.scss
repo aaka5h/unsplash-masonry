@@ -23,8 +23,16 @@ a {
   left: 0;
   width: 100%;
   height: 100%;
+  &:empty {
+    display: none;
+  }
 }
-
+.animated-wrapper {
+  display: flex;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
 .modal-wrapper {
   display: flex;
   position: absolute;
@@ -33,11 +41,12 @@ a {
   align-items: center;
 
   pointer-events: none;
-  top: 0; 
+  top: 0;
   left: 0;
   height: 100%;
   width: 100%;
   z-index: 1000;
+
   .modal {
     position: static;
     padding: 3rem;
@@ -46,11 +55,23 @@ a {
 }
 
 .modal-backdrop {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: 1000;
   background-color: rgba($color-dark-2, 0.6);
+}
+
+.details-card {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding: 0 .5rem;
+  align-items: center;
+  .photo-card {
+    max-width: 40%;
+    width: 300px;
+  }
 }

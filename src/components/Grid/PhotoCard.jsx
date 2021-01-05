@@ -15,7 +15,7 @@ const PhotoCard = React.forwardRef((props, ref) => {
   const paddingBottom = `${(100 * photo.height) / photo.width}%`;
 
   const innerRef = React.useRef();
-  const onResize = React.useCallback((r) => console.log(r), []);
+  const onResize = React.useCallback((r) => console.log('on resize image', r), []);
   const onClickCard = useCallback(
     (contentRect) => {
       return (e) => {
@@ -30,6 +30,8 @@ const PhotoCard = React.forwardRef((props, ref) => {
     <Measure
       client
       offset
+      bounds
+      scroll
       // onResize={onResize}
       innerRef={(r) => {
         mergeRefs(ref)(r);
@@ -43,7 +45,10 @@ const PhotoCard = React.forwardRef((props, ref) => {
           onClick={(e) => onClickPhoto(e, photo, contentRect, innerRef.current)}
         >
           <Link className={cssClasses['photo-card__link']} to={`/photos/${photo.id}`}>
-            <div className={cssClasses['photo-card__img-wrapper']} style={{ paddingBottom }}>
+            <div
+              className={cssClasses['photo-card__img-wrapper']}
+              style={{ paddingBottom, backgroundColor: photo.color }}
+            >
               <Photo src={photo.urls.small} alt={photo.alt_description} />
             </div>
           </Link>
