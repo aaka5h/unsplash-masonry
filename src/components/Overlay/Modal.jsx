@@ -31,8 +31,21 @@ const Modal = React.forwardRef((props, ref) => {
     ...rest
   } = props;
 
-  const mountModal = open;
+  const [exited, setExited] = React.useState(!open);
+
+  if (open) {
+    if (exited) setExited(false);
+  } /* else if (!exited) {
+    setExited(true);
+  } */
+  const mountModal = open || !exited;
   // const ModalPortal = usePortal({ container: modalsDiv });
+
+  React.useEffect(() => {}, [exited]);
+
+  const handleExited = React.useCallback(() => {
+    setExited(true);
+  }, []);
 
   const handleBackdropClick = useCallback(
     (e) => {
@@ -68,10 +81,11 @@ const Modal = React.forwardRef((props, ref) => {
       <Component className={className}>
         {backdrop && backdropEl()}
         <ModalTransition
-          unmountOnExit={unmountOnExit}
+          unmountOnExit
           transitionOnAppear={transitionOnAppear}
-          timeout={300}
           in={open}
+          timeout={dialogTransitionTimeout}
+          onExited={handleExited}
         >
           {children}
         </ModalTransition>

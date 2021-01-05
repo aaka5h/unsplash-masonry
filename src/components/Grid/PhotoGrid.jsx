@@ -4,8 +4,9 @@ import { debounce } from 'utils';
 import { SlugAnimation } from 'components/Animations/SlugAnimation';
 import { withRouter } from 'react-router-dom';
 import { canUseDOM } from 'components/Portal/Portal';
-import { Transition, animated } from 'react-spring/renderprops';
+import { Transition, animated, config } from 'react-spring/renderprops';
 import memoize from 'memoize-one';
+import classNames from 'classnames';
 import { AnimatedModal } from 'components/Modal/AnimatedModal';
 import Modal from 'components/Modal/Modal';
 import { stubFalse } from 'lodash';
@@ -75,11 +76,15 @@ class PhotoGrid extends React.PureComponent {
 
   cardClicked = (event, photo, measure, ref) => {
     console.log('clicked reference', measure, ref);
-    this.openCardRef = ref;
+    const { selectedPhoto } = this.state;
+    const open = !!selectedPhoto;
+    if (!open) {
+      this.openCardRef = ref;
+    }
     const [dimensions] = this.openCardRef.getClientRects();
     this.setState({
-      width: measure.client.width,
-      height: measure.client.height,
+      width: dimensions.width,
+      height: dimensions.height,
       x: dimensions.left,
       y: dimensions.top,
       m: measure.bounds,
@@ -112,9 +117,9 @@ class PhotoGrid extends React.PureComponent {
     this.toggle();
   };
 
-  update = (d) => {
+  update = (p) => {
     const { selectedPhoto } = this.state;
-    const open = (selectedPhoto && selectedPhoto.id) === d.id;
+    const open = (selectedPhoto && selectedPhoto.id) === p.id;
 
     return {
       opacity: selectedPhoto && !open ? 0 : 1,
@@ -170,7 +175,7 @@ class PhotoGrid extends React.PureComponent {
 
   render() {
     const { photos, photoAs, detailsAs: PhotoDetails } = this.props;
-    const { cols, selectedPhoto, opacity, width, height, x, y, m } = this.state;
+    const { cols, selectedPhoto, width, height, x, y, lastOpen } = this.state;
 
     const grid = this.getGrid(photos, cols);
 
@@ -184,13 +189,13 @@ class PhotoGrid extends React.PureComponent {
 
     const renderedPhoto = (
       <AnimatedModal open={!!selectedPhoto} onClose={this.modalClosed}>
-        <div className={styles['modal-container']}>
+        <div>
           <Transition
-            // duration={3000}
+            config={config.slow}
             from={{
               opacity: 0,
               width: `${width}px`,
-              // height: `${height}px`,
+              height: `${height}px`,
               transform: `translate3d(${x}px,${y}px,0)`,
             }}
             enter={{
@@ -208,29 +213,33 @@ class PhotoGrid extends React.PureComponent {
             leave={{
               width: `${width}px`,
               height: `${height}px`,
+              opacity: 0,
               transform: `translate3d(${x}px,${y}px,0)`,
             }}
             items={selectedPhoto}
           >
-            {(p) => (styles) => {
-              // console.log('zoom in styles', styles);
-              return (
-                <animated.div style={{ ...styles, }}>
-                  <PhotoDetails
-                    onClickPhoto={this.cardClicked}
-                    key={selectedPhoto.id}
-                    photo={selectedPhoto}
-                  />
-                </animated.div>
-              );
-            }}
+            {(p) =>
+              p &&
+              ((styles) => {
+                // console.log('zoom in styles', styles);
+                return (
+                  <animated.div
+                    style={{ ...styles, backgroundColor: p ? p.color : lastOpen && lastOpen.color }}
+                  >
+                    {selectedPhoto && (
+                      <PhotoDetails onClickPhoto={this.cardClicked} key={p.id} photo={p} />
+                    )}
+                  </animated.div>
+                );
+              })
+            }
           </Transition>
         </div>
       </AnimatedModal>
     );
     return (
       <>
-       {/*  <p style={{ position: 'fixed', top: 0, left: 0, zIndex: 10000, background: 'white' }}>
+        {/*  <p style={{ position: 'fixed', top: 0, left: 0, zIndex: 10000, background: 'white' }}>
           {JSON.stringify({ opacity, width, height, m, x, y }, null, 2)}
         </p> */}
         {renderedPhoto}

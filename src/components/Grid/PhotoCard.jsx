@@ -4,14 +4,14 @@ import { Link } from 'react-router-dom';
 import Measure from 'react-measure';
 import { mergeRefs } from 'utils';
 
-const Photo = ({ src, alt_description: altDescription }) => {
+export const PhotoImg = ({ src, alt_description: altDescription }) => {
   return <img className={cssClasses['photo-card__img']} src={src} alt={altDescription} />;
 };
 
-Photo.displayName = 'PhotoImg';
+PhotoImg.displayName = 'PhotoImg';
 
 const PhotoCard = React.forwardRef((props, ref) => {
-  const { photo, onClickPhoto } = props;
+  const { photo, onClickPhoto, style } = props;
   const paddingBottom = `${(100 * photo.height) / photo.width}%`;
 
   const innerRef = React.useRef();
@@ -47,9 +47,10 @@ const PhotoCard = React.forwardRef((props, ref) => {
           <Link className={cssClasses['photo-card__link']} to={`/photos/${photo.id}`}>
             <div
               className={cssClasses['photo-card__img-wrapper']}
-              style={{ paddingBottom, backgroundColor: photo.color }}
+              style={{ ...style, backgroundColor: photo.color }}
             >
-              <Photo src={photo.urls.small} alt={photo.alt_description} />
+              <PhotoImg src={photo.urls.small} alt={photo.alt_description} />
+              <div style={{paddingBottom}}></div>
             </div>
           </Link>
         </div>

@@ -103,6 +103,7 @@ class ModalTransition extends React.Component {
   }
 
   componentWillUnmount() {
+    console.log('transition will unmount');
     this.cancelNextCallback();
     this.currentInstance = null;
   }
@@ -190,6 +191,7 @@ class ModalTransition extends React.Component {
       // TODO: animation key get depend on browser
       this.animationListener = on(node, 'animationend', this.nextCallBack);
       if (timeout !== null) {
+        console.log('transition setting timeout of:', timeout);
         setTimeout(this.nextCallBack, timeout);
       }
     } else {
