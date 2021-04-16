@@ -1,16 +1,22 @@
-import React, { useCallback } from 'react';
-import { SlugAnimation } from './Animations/SlugAnimation';
+import React from 'react';
+import UnsplashContext from 'unsplash/unsplash-context';
 import PhotoCard from './Grid/PhotoCard';
-import { PhotoImg } from './Grid/PhotoCard';
 
 const x = 700;
-
 
 export const PhotoDetails = React.forwardRef((props, ref) => {
   const { photo, onClickPhoto: close } = props;
   if (!photo) return null;
-  const [width, setWidth] = React.useState(0);
-  const [minWidth, setMinWidth] = React.useState(0);
+  const [details, setDetails] = React.useState(null);
+
+  const unsplash = React.useContext(UnsplashContext);
+
+  React.useEffect(() => {
+    unsplash.photos.getPhoto(photo.id).then((p) => {
+      console.log('fetched photo details:', p);
+      setDetails(p);
+    });
+  }, [photo, unsplash]);
   const ratio = photo.width / photo.height;
 
   React.useEffect(() => {}, [photo]);

@@ -4,6 +4,7 @@ import { animated, Transition } from 'react-spring/renderprops';
 export const FadeAnimation = React.forwardRef((props, ref) => {
   const {
     children,
+    show,
     from = { opacity: 0 },
     enter = { opacity: 1 },
     leave = { opacity: 0 },
@@ -27,12 +28,12 @@ export const FadeAnimation = React.forwardRef((props, ref) => {
   return (
     <Transition
       ref={ref}
-      items={result}
+      items={show}
       from={from}
       enter={enter}
       leave={leave}
       {...rest}
-      children={(child) => child}
+      children={(child) => show && child}
     />
   );
 });

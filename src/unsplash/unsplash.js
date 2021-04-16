@@ -1,13 +1,14 @@
-export const API_URL = "https://api.unsplash.com";
-const stringifyQuery = function (obj) {
+export const API_URL = 'https://api.unsplash.com';
+const stringifyQuery = function (obj = {}) {
   return Object.keys(obj)
     .map(function (k) {
-      const keyString = encodeURIComponent(k) + "=";
+      const keyString = encodeURIComponent(k) + '=';
       return keyString + encodeURIComponent(obj[k]);
     })
     .filter(Boolean)
-    .join("&");
+    .join('&');
 };
+
 const buildOptions = function (options) {
   let { method, query } = options;
   let url = `${this._apiUrl}${options.url}`;
@@ -20,8 +21,8 @@ const buildOptions = function (options) {
 };
 const photos = function () {
   return {
-    getPhotos: (page = 1, perPage = 10, orderBy = "latest") => {
-      const url = "/photos";
+    getPhotos: (page = 1, perPage = 10, orderBy = 'latest') => {
+      const url = '/photos';
       const query = {
         page,
         per_page: perPage,
@@ -30,7 +31,14 @@ const photos = function () {
       return this.request({
         url,
         query,
-        method: "GET",
+        method: 'GET',
+      });
+    },
+    getPhoto: (id) => {
+      const url = `/photos/${id}`;
+      return this.request({
+        url,
+        method: 'GET',
       });
     },
   };
@@ -54,7 +62,7 @@ export class Unsplash {
   }
 
   jsonBody = function (res) {
-    return typeof res.json === "function" ? res.json() : res;
+    return typeof res.json === 'function' ? res.json() : res;
   };
 
   /* 

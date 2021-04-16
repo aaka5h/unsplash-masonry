@@ -1,10 +1,13 @@
 import React, { useMemo } from 'react';
 import BaseModal from '../Overlay/Modal';
+import { useBodyStyles } from './utils';
 
 const ModalContext = React.createContext(null);
 
 const Modal = React.forwardRef((props, ref) => {
   const { children, open, onClose, as: Component, ...rest } = props;
+  const dialogRef = React.useRef();
+
   const modalContextValue = useMemo(
     () => ({
       onModalClose: onClose,
@@ -15,8 +18,8 @@ const Modal = React.forwardRef((props, ref) => {
   return (
     <ModalContext.Provider value={modalContextValue}>
       <BaseModal open={open} onClose={onClose} ref={ref} {...rest}>
-        <div className="modal-wrapper">
-          <Component role="dialog" ref={ref}>
+        <div className="modal-wrapper" ref={dialogRef}>
+          <Component role="dialog">
             <div className="modal">{children}</div>
           </Component>
         </div>

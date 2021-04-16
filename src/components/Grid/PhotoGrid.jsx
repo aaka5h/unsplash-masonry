@@ -4,12 +4,8 @@ import { debounce } from 'utils';
 import { SlugAnimation } from 'components/Animations/SlugAnimation';
 import { withRouter } from 'react-router-dom';
 import { canUseDOM } from 'components/Portal/Portal';
-import { Transition, animated, config } from 'react-spring/renderprops';
+import { Transition, animated } from 'react-spring/renderprops';
 import memoize from 'memoize-one';
-import classNames from 'classnames';
-import { AnimatedModal } from 'components/Modal/AnimatedModal';
-import Modal from 'components/Modal/Modal';
-import { stubFalse } from 'lodash';
 
 function getCols(width) {
   // min width style going small to big
@@ -28,13 +24,13 @@ class PhotoGrid extends React.PureComponent {
   state = {
     cols: 3,
     selectedPhoto: null,
-    open: null,
     lastOpen: null,
     width: 0,
     height: 0,
+    x: 0,
+    y: 0,
   };
-  selectedPhotoRef;
-  openCardRef;
+  openCardRef = React.createRef();
 
   componentDidMount() {
     let cols = 3;
@@ -43,16 +39,11 @@ class PhotoGrid extends React.PureComponent {
       cols = getCols(window.innerWidth);
     }
     console.log(this.props);
-    this.PhotoAs = animated(this.props.photoAs);
 
     this.setState({ cols });
   }
 
-  componentDidUpdate(prevProp) {
-    if (prevProp.photoAs !== this.props.photoA) {
-      this.PhotoAs = animated(this.props.photoAs);
-    }
-  }
+  componentDidUpdate(prevProp) {}
 
   onWindowResize = (e) => {
     const cols = getCols(window.innerWidth);
@@ -74,20 +65,19 @@ class PhotoGrid extends React.PureComponent {
     return currentCol;
   }
 
-  cardClicked = (event, photo, measure, ref) => {
-    console.log('clicked reference', measure, ref);
+  cardClicked = (event, photo, ref) => {
+    console.log('clicked reference', ref);
     const { selectedPhoto } = this.state;
     const open = !!selectedPhoto;
-    if (!open) {
-      this.openCardRef = ref;
+    if (!open && ref) {
+      this.openCardRef.current = ref;
     }
-    const [dimensions] = this.openCardRef.getClientRects();
+    let  [dimensions] = this.openCardRef.current.getClientRects();
     this.setState({
       width: dimensions.width,
       height: dimensions.height,
       x: dimensions.left,
       y: dimensions.top,
-      m: measure.bounds,
     });
     this.toggle(photo);
   };
@@ -105,17 +95,13 @@ class PhotoGrid extends React.PureComponent {
       };
     });
   };
-  resizeOuter = (param) => {
+/*   resizeOuter = (param) => {
     console.log('on resize outer');
     this.setState({
       outerWidth: param.client.width,
       outerHeight: param.client.height,
     });
-  };
-
-  modalClosed = () => {
-    this.toggle();
-  };
+  }; */
 
   update = (p) => {
     const { selectedPhoto } = this.state;
@@ -132,15 +118,27 @@ class PhotoGrid extends React.PureComponent {
     };
     // return d;
   };
+  setSelectedRef = (r) => {
+    if (!r) {
+      return;
+    }
+    this.openCardRef.current = r;
+  }
   getPhoto = (photo) => {
-    const { photoAs: Component, detailsAs: PhotoDetails } = this.props;
-    const { selectedPhoto, width, height, x, y } = this.state;
-    /*     if (selectedPhoto) {
-      console.log('setting width and height', width, height);
-      console.log('setting cordinate', x, y);
-    } */
+    const { photoAs: Component } = this.props;
+    const { selectedPhoto, lastOpen } = this.state;
+    const open = (selectedPhoto && selectedPhoto.id) === photo.id;
+    const openedLast = (lastOpen && lastOpen.id) === photo.id;
 
-    const photoDisp = <Component onClickPhoto={this.cardClicked} key={photo.id} photo={photo} />;
+
+    const photoDisp = (
+      <Component
+        ref={open ? this.setSelectedRef : null}
+        onClickPhoto={this.cardClicked}
+        key={photo.id}
+        photo={photo}
+      />
+    );
 
     // return renderedPhoto;
     return (
@@ -174,7 +172,7 @@ class PhotoGrid extends React.PureComponent {
   });
 
   render() {
-    const { photos, photoAs, detailsAs: PhotoDetails } = this.props;
+    const { photos, detailsAs } = this.props;
     const { cols, selectedPhoto, width, height, x, y, lastOpen } = this.state;
 
     const grid = this.getGrid(photos, cols);
@@ -187,55 +185,13 @@ class PhotoGrid extends React.PureComponent {
       </div>
     ));
 
-    const renderedPhoto = (
-      <AnimatedModal open={!!selectedPhoto} onClose={this.modalClosed}>
-        <div>
-          <Transition
-            config={config.slow}
-            from={{
-              opacity: 0,
-              width: `${width}px`,
-              height: `${height}px`,
-              transform: `translate3d(${x}px,${y}px,0)`,
-            }}
-            enter={{
-              width: `${document.body.clientWidth}px`,
-              height: `${window.innerHeight}px`,
-              opacity: 1,
-              transform: `translate3d(0,0,0)`,
-            }}
-            update={{
-              width: `${window.innerWidth}px`,
-              height: `${window.innerHeight}px`,
-              opacity: 1,
-              transform: `translate3d(0,0,0)`,
-            }}
-            leave={{
-              width: `${width}px`,
-              height: `${height}px`,
-              opacity: 0,
-              transform: `translate3d(${x}px,${y}px,0)`,
-            }}
-            items={selectedPhoto}
-          >
-            {(p) =>
-              p &&
-              ((styles) => {
-                // console.log('zoom in styles', styles);
-                return (
-                  <animated.div
-                    style={{ ...styles, backgroundColor: p ? p.color : lastOpen && lastOpen.color }}
-                  >
-                    {selectedPhoto && (
-                      <PhotoDetails onClickPhoto={this.cardClicked} key={p.id} photo={p} />
-                    )}
-                  </animated.div>
-                );
-              })
-            }
-          </Transition>
-        </div>
-      </AnimatedModal>
+    const renderedPhoto = detailsAs(
+      selectedPhoto,
+      lastOpen,
+      (e) => {
+        this.cardClicked(e, selectedPhoto);
+      },
+      { width, height, x, y }
     );
     return (
       <>
@@ -252,12 +208,6 @@ class PhotoGrid extends React.PureComponent {
           {renderCols}
         </div>
       </>
-
-      // {
-      //   <AnimatedModal open={!!selectedPhoto} onClose={this.modalClosed}>
-      //     <PhotoDetails photo={selectedPhoto}></PhotoDetails>
-      //   </AnimatedModal>
-      // }
     );
   }
 }

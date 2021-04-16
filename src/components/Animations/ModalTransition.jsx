@@ -3,6 +3,7 @@ import { getDomNode, isFunction } from 'utils';
 import PropTypes from 'prop-types';
 import { omit } from 'lodash';
 import classNames from 'classnames';
+import helper from 'utils/dom-helper';
 
 export var STATUS;
 (function (STATUS) {
@@ -12,15 +13,6 @@ export var STATUS;
   STATUS[(STATUS['ENTERED'] = 3)] = 'ENTERED';
   STATUS[(STATUS['EXITING'] = 4)] = 'EXITING';
 })(STATUS || (STATUS = {}));
-
-function on(el, e, callback) {
-  el.addEventListener(e, callback);
-  return {
-    off: function () {
-      el.removeEventListener(e, callback);
-    },
-  };
-}
 
 const transitionPropType = {
   in: PropTypes.bool,
@@ -189,7 +181,7 @@ class ModalTransition extends React.Component {
     this.animationListener && this.animationListener.off();
     if (node) {
       // TODO: animation key get depend on browser
-      this.animationListener = on(node, 'animationend', this.nextCallBack);
+      this.animationListener = helper.on(node, 'animationend', this.nextCallBack);
       if (timeout !== null) {
         console.log('transition setting timeout of:', timeout);
         setTimeout(this.nextCallBack, timeout);

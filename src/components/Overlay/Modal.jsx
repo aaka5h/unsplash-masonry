@@ -1,10 +1,37 @@
 import ModalTransition from 'components/Animations/ModalTransition';
 import Portal from 'components/Portal/Portal';
 import { canUseDOM } from 'components/Portal/Portal';
-import { usePortal } from 'components/Portal/Portal';
 import React, { useCallback } from 'react';
+import { getDomNode } from 'utils';
+import { ModalManager } from './ModalManager';
 
 let modalsDiv = null;
+let modalManager;
+
+function getModalManager() {
+  if (!modalManager) modalManager = new ModalManager();
+  else return modalManager;
+}
+
+function useModalManager() {
+  const manager = getModalManager();
+  const modal = React.useRef({ modal: null });
+
+  return {
+    add: (container, className) => {
+      manager.add(modal.current, container, className);
+    },
+    remove: () => {
+      manager.remove(modal.current);
+    },
+    setDialogRef: React.useCallback(
+      (ref) => {
+        modal.current.modal = ref;
+      },
+      [manager]
+    ),
+  };
+}
 
 if (canUseDOM) {
   modalsDiv = document.createElement('div');
@@ -35,18 +62,38 @@ const Modal = React.forwardRef((props, ref) => {
 
   if (open) {
     if (exited) setExited(false);
-  } /* else if (!exited) {
-    setExited(true);
-  } */
+  }
+
   const mountModal = open || !exited;
   // const ModalPortal = usePortal({ container: modalsDiv });
+  const manager = useModalManager();
 
-  React.useEffect(() => {}, [exited]);
+  const handleOpen = React.useCallback(() => {
+    manager.add(document.body, 'modal-open');
+  }, [manager]);
 
   const handleExited = React.useCallback(() => {
     setExited(true);
   }, []);
 
+  const handleClose = React.useCallback(() => {
+    manager.remove();
+  }, [manager]);
+
+  React.useEffect(() => {
+    if (!open) return;
+    handleOpen();
+  }, [exited, open, handleOpen, handleExited]);
+
+  React.useEffect(() => {
+    if (!exited) return;
+    handleClose();
+  }, [exited]);
+
+  React.useEffect(() => {
+    if (!open) return;
+    // document.body.classList.add('modal-open');
+  }, [open, exited]);
   const handleBackdropClick = useCallback(
     (e) => {
       if (e.target !== e.currentTarget) {
@@ -78,7 +125,7 @@ const Modal = React.forwardRef((props, ref) => {
 
   return (
     <Portal container={modalsDiv}>
-      <Component className={className}>
+      <Component ref={manager.setDialogRef} className={className}>
         {backdrop && backdropEl()}
         <ModalTransition
           unmountOnExit
@@ -86,6 +133,7 @@ const Modal = React.forwardRef((props, ref) => {
           in={open}
           timeout={dialogTransitionTimeout}
           onExited={handleExited}
+          onEntered={onEntered}
         >
           {children}
         </ModalTransition>
