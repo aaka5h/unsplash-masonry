@@ -31,3 +31,5 @@ export const AnimatedModal = React.forwardRef((props, ref) => {
     </BaseModal>
   );
 });
+
+AnimatedModal.displayName = 'AnimatedModal';

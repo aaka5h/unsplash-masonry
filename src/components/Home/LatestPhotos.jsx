@@ -7,6 +7,8 @@ import { PhotoDetails } from 'components/PhotoDetails';
 import { AnimatedModal } from 'components/Modal/AnimatedModal';
 import { animated, config, Transition } from 'react-spring/renderprops';
 import UnsplashContext from 'unsplash/unsplash-context';
+import { ObserverComponent } from 'components/IntersectionObserver';
+import { ObserverComponent2 } from 'components/IntersectionObserver';
 
 export class LatestPhotos extends Component {
   unsplash;
@@ -19,6 +21,7 @@ export class LatestPhotos extends Component {
     this.unsplash = new Unsplash({
       apiUrl: 'http://localhost:1221',
     });
+    this.currentRequests = new Map();
   }
 
   componentDidMount() {
@@ -27,12 +30,18 @@ export class LatestPhotos extends Component {
 
   loadPhotos = () => {
     const { photos, page } = this.state;
-    this.unsplash.photos.getPhotos(page + 1).then((data) => {
+    if (this.currentRequests.has(page + 1)) return;
+    const p = this.unsplash.photos.getPhotos(page + 1);
+    this.currentRequests.set(page + 1, p);
+    p.then((data) => {
       console.log('api data:', data);
-      this.setState({
-        photos: [...photos, ...data],
-        // is this safe to use previous state like this??
-        page: page + 1,
+      this.setState(() => {
+        this.currentRequests.delete(page + 1);
+        return {
+          photos: [...photos, ...data],
+          // is this safe to use previous state like this??
+          page: page + 1,
+        };
       });
     });
   };
@@ -79,9 +88,7 @@ export class LatestPhotos extends Component {
               ((styles) => {
                 // console.log('zoom in styles', styles);
                 return (
-                  <animated.div
-                    style={{ ...styles, backgroundColor: p.color }}
-                  >
+                  <animated.div style={{ ...styles, backgroundColor: p.color }}>
                     <PhotoDetails onClickPhoto={toggle} key={p.id} photo={p} />
                   </animated.div>
                 );
@@ -104,7 +111,15 @@ export class LatestPhotos extends Component {
             fullscreenDetails={true}
           ></PhotoGrid>
           <Route path="/photos/:photoId" render={() => <div>route rendered</div>}></Route>
-          <button onClick={this.loadMore}>Load more</button>
+          <ObserverComponent2>
+            {({ inView, entry, ref }) => {
+              if (inView) {
+                console.log('div in view now', entry);
+              }
+              inView && this.loadMore();
+              return <div ref={ref}></div>;
+            }}
+          </ObserverComponent2>
         </>
       </UnsplashContext.Provider>
     );

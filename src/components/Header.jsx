@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ReactComponent as ReactLogo } from 'react-logo.svg';
 import { SlugAnimation } from './Animations/SlugAnimation';
 
+
+const twitterUrl = 'https://twitter.com/_variable';
 const photographyTypes = `portrait
 fashion
 sports
@@ -65,7 +67,7 @@ const Header = (props) => {
                 Made by{' '}
                 <a
                   target="_blank"
-                  href="https://twitter.com"
+                  href="{twitterUrl}"
                   aria-label="muscle flexing"
                   role="img"
                 >

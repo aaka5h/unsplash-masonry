@@ -65,6 +65,7 @@ class ModalTransition extends React.Component {
     }
     return null;
   }
+
   componentDidUpdate() {
     const { status } = this.state;
     const { unmountOnExit } = this.props;

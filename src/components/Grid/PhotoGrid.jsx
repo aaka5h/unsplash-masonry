@@ -103,21 +103,6 @@ class PhotoGrid extends React.PureComponent {
     });
   }; */
 
-  update = (p) => {
-    const { selectedPhoto } = this.state;
-    const open = (selectedPhoto && selectedPhoto.id) === p.id;
-
-    return {
-      opacity: selectedPhoto && !open ? 0 : 1,
-      // width: open ? window.innerWidth : null,
-      // height: open ? window.innerHeight : null,
-      // zIndex: open ? 1000 : 0,
-      // position: open ? 'fixed' : null,
-      // x: open ? 0 : null,
-      // y: open ? 0 : null,
-    };
-    // return d;
-  };
   setSelectedRef = (r) => {
     if (!r) {
       return;
@@ -140,21 +125,7 @@ class PhotoGrid extends React.PureComponent {
       />
     );
 
-    // return renderedPhoto;
-    return (
-      <Transition
-        photo={photo}
-        key={photo.id}
-        keys={(p) => p.id}
-        items={photo}
-        from={{ opacity: 1 }}
-        enter={this.update}
-        update={this.update}
-        leave={{ opacity: 0 }}
-      >
-        {(photo) => ({ opacity }) => <animated.div style={{ opacity }}>{photoDisp}</animated.div>}
-      </Transition>
-    );
+    return photoDisp;
   };
 
   getGrid = memoize((photos, cols) => {
