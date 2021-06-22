@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { ReactComponent as ReactLogo } from 'react-logo.svg';
-import { SlugAnimation } from './Animations/SlugAnimation';
+import React, {useEffect, useState} from 'react';
+import {ReactComponent as ReactLogo} from 'react-logo.svg';
+import {SlugAnimation} from './Animations/SlugAnimation';
 
 
 const twitterUrl = 'https://twitter.com/_variable';
@@ -67,9 +67,10 @@ const Header = (props) => {
                 Made by{' '}
                 <a
                   target="_blank"
-                  href="{twitterUrl}"
+                  href={twitterUrl}
                   aria-label="muscle flexing"
                   role="img"
+                  rel="noopener noreferrer"
                 >
                   aakash
                 </a>{' '}

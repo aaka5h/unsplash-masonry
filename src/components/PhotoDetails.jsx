@@ -7,7 +7,7 @@ const x = 700;
 export const PhotoDetails = React.forwardRef((props, ref) => {
   const { photo, onClickPhoto: close } = props;
   if (!photo) return null;
-  const [details, setDetails] = React.useState(null);
+  const [, setDetails] = React.useState(null);
 
   const unsplash = React.useContext(UnsplashContext);
 

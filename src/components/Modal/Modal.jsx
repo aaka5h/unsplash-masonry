@@ -1,6 +1,5 @@
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 import BaseModal from '../Overlay/Modal';
-import { useBodyStyles } from './utils';
 
 const ModalContext = React.createContext(null);
 

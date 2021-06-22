@@ -1,8 +1,8 @@
 import React from 'react';
 import cssClasses from './PhotoCard.module.scss';
-import { Link } from 'react-router-dom';
-import { mergeRefs } from 'utils';
-import { ObserverComponent2 } from 'components/IntersectionObserver';
+import {Link} from 'react-router-dom';
+import {mergeRefs} from 'utils';
+import {ObserverComponent2} from 'components/IntersectionObserver';
 
 export const PhotoImg = React.forwardRef(({ src, alt_description: altDescription, inView }, ref) => {
   return inView ? (

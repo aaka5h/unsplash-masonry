@@ -1,16 +1,14 @@
 import ModalTransition from 'components/Animations/ModalTransition';
-import Portal from 'components/Portal/Portal';
-import { canUseDOM } from 'components/Portal/Portal';
-import React, { useCallback } from 'react';
-import { getDomNode } from 'utils';
-import { ModalManager } from './ModalManager';
+import Portal, {canUseDOM} from 'components/Portal/Portal';
+import React, {useCallback} from 'react';
+import {ModalManager} from './ModalManager';
 
 let modalsDiv = null;
 let modalManager;
 
 function getModalManager() {
   if (!modalManager) modalManager = new ModalManager();
-  else return modalManager;
+  return modalManager;
 }
 
 function useModalManager() {
@@ -28,7 +26,7 @@ function useModalManager() {
       (ref) => {
         modal.current.modal = ref;
       },
-      [manager]
+      []
     ),
   };
 }
@@ -88,7 +86,7 @@ const Modal = React.forwardRef((props, ref) => {
   React.useEffect(() => {
     if (!exited) return;
     handleClose();
-  }, [exited]);
+  }, [exited, handleClose]);
 
   React.useEffect(() => {
     if (!open) return;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trail, animated } from 'react-spring/renderprops';
+import {animated, Trail} from 'react-spring/renderprops';
 
 export const SlugAnimation = (props) => {
   const {

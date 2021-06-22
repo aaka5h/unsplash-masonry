@@ -1,5 +1,5 @@
 import React from 'react';
-import { animated, Transition } from 'react-spring/renderprops';
+import {Transition} from 'react-spring/renderprops';
 
 export const FadeAnimation = React.forwardRef((props, ref) => {
   const {
@@ -10,20 +10,6 @@ export const FadeAnimation = React.forwardRef((props, ref) => {
     leave = { opacity: 0 },
     ...rest
   } = props;
-
-  const result = (styles) => {
-    const child = React.Children.only(children);
-    const Component = animated[child.type] || animated(child.type);
-    const newProps = {
-      ...child.props,
-      style: {
-        willChange: 'opacity',
-        ...child.props.style,
-        ...styles,
-      },
-    };
-    return <Component {...newProps} />;
-  };
 
   return (
     <Transition

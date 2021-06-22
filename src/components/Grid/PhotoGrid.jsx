@@ -1,10 +1,9 @@
 import React from 'react';
 import styles from './PhotoGrid.module.scss';
-import { debounce } from 'utils';
-import { SlugAnimation } from 'components/Animations/SlugAnimation';
-import { withRouter } from 'react-router-dom';
-import { canUseDOM } from 'components/Portal/Portal';
-import { Transition, animated } from 'react-spring/renderprops';
+import {debounce} from 'utils';
+import {SlugAnimation} from 'components/Animations/SlugAnimation';
+import {withRouter} from 'react-router-dom';
+import {canUseDOM} from 'components/Portal/Portal';
 import memoize from 'memoize-one';
 
 function getCols(width) {
@@ -111,9 +110,9 @@ class PhotoGrid extends React.PureComponent {
   }
   getPhoto = (photo) => {
     const { photoAs: Component } = this.props;
-    const { selectedPhoto, lastOpen } = this.state;
+    const { selectedPhoto } = this.state;
     const open = (selectedPhoto && selectedPhoto.id) === photo.id;
-    const openedLast = (lastOpen && lastOpen.id) === photo.id;
+    // const openedLast = (lastOpen && lastOpen.id) === photo.id;
 
 
     const photoDisp = (

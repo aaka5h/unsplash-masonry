@@ -1,14 +1,13 @@
-import React, { Component } from 'react';
-import { Unsplash } from 'unsplash/unsplash';
+import React, {Component} from 'react';
+import {Unsplash} from 'unsplash/unsplash';
 import PhotoGrid from 'components/Grid/PhotoGrid';
-import { Route } from 'react-router-dom';
+import {Route} from 'react-router-dom';
 import PhotoCard from 'components/Grid/PhotoCard';
-import { PhotoDetails } from 'components/PhotoDetails';
-import { AnimatedModal } from 'components/Modal/AnimatedModal';
-import { animated, config, Transition } from 'react-spring/renderprops';
+import {PhotoDetails} from 'components/PhotoDetails';
+import {AnimatedModal} from 'components/Modal/AnimatedModal';
+import {animated, config, Transition} from 'react-spring/renderprops';
 import UnsplashContext from 'unsplash/unsplash-context';
-import { ObserverComponent } from 'components/IntersectionObserver';
-import { ObserverComponent2 } from 'components/IntersectionObserver';
+import {ObserverComponent2} from 'components/IntersectionObserver';
 
 export class LatestPhotos extends Component {
   unsplash;
@@ -18,8 +17,9 @@ export class LatestPhotos extends Component {
   };
   constructor(props) {
     super(props);
+    console.log('final env', process.env.REACT_APP_API_DOMAIN);
     this.unsplash = new Unsplash({
-      apiUrl: 'http://localhost:1221',
+      apiUrl: process.env.REACT_APP_API_DOMAIN
     });
     this.currentRequests = new Map();
   }

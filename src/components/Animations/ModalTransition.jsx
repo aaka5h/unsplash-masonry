@@ -1,7 +1,7 @@
 import React from 'react';
-import { getDomNode, isFunction } from 'utils';
+import {getDomNode, isFunction} from 'utils';
 import PropTypes from 'prop-types';
-import { omit } from 'lodash';
+import {omit} from 'lodash';
 import classNames from 'classnames';
 import helper from 'utils/dom-helper';
 

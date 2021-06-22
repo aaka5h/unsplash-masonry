@@ -13,7 +13,7 @@ export const useBodyStyles = (ref, { overflow }) => {
     if (dialog) {
       const scrollHeight = dialog.scrollHeight;
       const contentEl = dialog.querySelector('.dialog-content');
-      const contentHeight = contentEl.offsetHeight;
+      // const contentHeight = contentEl.offsetHeight;
       const bodyHeight = window?.innerWidth;
       const maxHeight = scrollHeight >= bodyHeight ? bodyHeight : scrollHeight;
       styles.maxHeight = maxHeight;

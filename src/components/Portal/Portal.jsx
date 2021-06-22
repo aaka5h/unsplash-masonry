@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect } from 'react';
+import React, {useCallback, useEffect} from 'react';
 import ReactDOM from 'react-dom';
-import classNames from 'classnames';
 
 export const canUseDOM = !!(
   typeof window !== 'undefined' &&
@@ -63,7 +62,7 @@ function usePortal(props) {
   const Prtl = useCallback(
     (props) =>
       rootEl.current ? <Portal container={rootEl.current}>{props.children}</Portal> : null,
-    [rootEl, container]
+    [rootEl]
   );
   return Prtl;
 }
