@@ -1,9 +1,9 @@
 import React from 'react';
 import styles from './PhotoGrid.module.scss';
-import {debounce} from 'utils';
-import {SlugAnimation} from 'components/Animations/SlugAnimation';
-import {withRouter} from 'react-router-dom';
-import {canUseDOM} from 'components/Portal/Portal';
+import { debounce } from 'utils';
+import { SlugAnimation } from 'components/Animations/SlugAnimation';
+import { withRouter } from 'react-router-dom';
+import { canUseDOM } from 'components/Portal/Portal';
 import memoize from 'memoize-one';
 
 function getCols(width) {
@@ -28,6 +28,8 @@ class PhotoGrid extends React.PureComponent {
     height: 0,
     x: 0,
     y: 0,
+    windowWidth: window.innerWidth,
+    windowHeight: window.innerHeight,
   };
   openCardRef = React.createRef();
 
@@ -46,7 +48,7 @@ class PhotoGrid extends React.PureComponent {
 
   onWindowResize = (e) => {
     const cols = getCols(window.innerWidth);
-    this.setState({ cols });
+    this.setState({ cols, windowWidth: window.innerWidth, windowHeight: window.innerHeight });
     console.log('window resized', cols);
   };
 
@@ -71,7 +73,7 @@ class PhotoGrid extends React.PureComponent {
     if (!open && ref) {
       this.openCardRef.current = ref;
     }
-    let  [dimensions] = this.openCardRef.current.getClientRects();
+    let [dimensions] = this.openCardRef.current.getClientRects();
     this.setState({
       width: dimensions.width,
       height: dimensions.height,
@@ -94,26 +96,18 @@ class PhotoGrid extends React.PureComponent {
       };
     });
   };
-/*   resizeOuter = (param) => {
-    console.log('on resize outer');
-    this.setState({
-      outerWidth: param.client.width,
-      outerHeight: param.client.height,
-    });
-  }; */
 
   setSelectedRef = (r) => {
     if (!r) {
       return;
     }
     this.openCardRef.current = r;
-  }
+  };
   getPhoto = (photo) => {
     const { photoAs: Component } = this.props;
     const { selectedPhoto } = this.state;
     const open = (selectedPhoto && selectedPhoto.id) === photo.id;
     // const openedLast = (lastOpen && lastOpen.id) === photo.id;
-
 
     const photoDisp = (
       <Component
@@ -143,7 +137,8 @@ class PhotoGrid extends React.PureComponent {
 
   render() {
     const { photos, detailsAs } = this.props;
-    const { cols, selectedPhoto, width, height, x, y, lastOpen } = this.state;
+    const { cols, selectedPhoto, width, height, x, y, windowWidth, windowHeight, lastOpen } =
+      this.state;
 
     const grid = this.getGrid(photos, cols);
 
@@ -161,7 +156,7 @@ class PhotoGrid extends React.PureComponent {
       (e) => {
         this.cardClicked(e, selectedPhoto);
       },
-      { width, height, x, y }
+      { width, height, x, y, windowWidth, windowHeight }
     );
     return (
       <>

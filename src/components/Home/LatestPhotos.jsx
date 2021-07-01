@@ -1,13 +1,14 @@
-import React, {Component} from 'react';
-import {Unsplash} from 'unsplash/unsplash';
+import React, { Component } from 'react';
+import { Unsplash } from 'unsplash/unsplash';
 import PhotoGrid from 'components/Grid/PhotoGrid';
-import {Route} from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import PhotoCard from 'components/Grid/PhotoCard';
-import {PhotoDetails} from 'components/PhotoDetails';
-import {AnimatedModal} from 'components/Modal/AnimatedModal';
-import {animated, config, Transition} from 'react-spring/renderprops';
+import { PhotoDetails } from 'components/PhotoDetails';
+import { AnimatedModal } from 'components/Modal/AnimatedModal';
+import { animated, config, Transition } from 'react-spring/renderprops';
 import UnsplashContext from 'unsplash/unsplash-context';
-import {ObserverComponent2} from 'components/IntersectionObserver';
+import { ObserverComponent2 } from 'components/IntersectionObserver';
+import ModalBody from 'components/Modal/ModalBody';
 
 export class LatestPhotos extends Component {
   unsplash;
@@ -19,7 +20,7 @@ export class LatestPhotos extends Component {
     super(props);
     console.log('final env', process.env.REACT_APP_API_DOMAIN);
     this.unsplash = new Unsplash({
-      apiUrl: process.env.REACT_APP_API_DOMAIN
+      apiUrl: process.env.REACT_APP_API_DOMAIN,
     });
     this.currentRequests = new Map();
   }
@@ -49,7 +50,12 @@ export class LatestPhotos extends Component {
     this.loadPhotos();
   };
 
-  photoDetails = (selectedPhoto, lastOpen, toggle, { width, height, x, y }) => {
+  photoDetails = (
+    selectedPhoto,
+    lastOpen,
+    toggle,
+    { width, height, x, y, windowWidth, windowHeight }
+  ) => {
     return (
       <AnimatedModal open={!!selectedPhoto} onClose={this.modalClosed}>
         <div>
@@ -63,18 +69,18 @@ export class LatestPhotos extends Component {
               borderRadius: '100px',
             }}
             enter={{
-              width: `${window.outerWidth}px`,
-              height: `${window.innerHeight}px`,
+              width: `${windowWidth}px`,
+              height: `${windowHeight}px`,
               opacity: 1,
               transform: `translate3d(0,0,0)`,
               borderRadius: '0',
             }}
-            /*   update={{
-              width: `${window.innerWidth}px`,
-              height: `${window.innerHeight}px`,
+            update={{
+              width: `${windowWidth}px`,
+              height: `${windowHeight}px`,
               opacity: 1,
               transform: `translate3d(0,0,0)`,
-            }} */
+            }}
             leave={{
               width: `${width}px`,
               height: `${height}px`,
@@ -89,7 +95,9 @@ export class LatestPhotos extends Component {
                 // console.log('zoom in styles', styles);
                 return (
                   <animated.div style={{ ...styles, backgroundColor: p.color }}>
-                    <PhotoDetails onClickPhoto={toggle} key={p.id} photo={p} />
+                    <ModalBody>
+                      <PhotoDetails onClickPhoto={toggle} key={p.id} photo={p} />
+                    </ModalBody>
                   </animated.div>
                 );
               })

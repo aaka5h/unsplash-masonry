@@ -1,4 +1,5 @@
 import React from 'react';
+import { debounce } from 'utils';
 import helper from 'utils/dom-helper';
 
 export const useBodyStyles = (ref, { overflow }) => {
@@ -11,10 +12,12 @@ export const useBodyStyles = (ref, { overflow }) => {
       overflow: 'auto',
     };
     if (dialog) {
-      const scrollHeight = dialog.scrollHeight;
       const contentEl = dialog.querySelector('.dialog-content');
+      const dialogBody = dialog.querySelector('.modal-body');
+      const scrollHeight = dialogBody.scrollHeight;
+
       // const contentHeight = contentEl.offsetHeight;
-      const bodyHeight = window?.innerWidth;
+      const bodyHeight = window.innerHeight;
       const maxHeight = scrollHeight >= bodyHeight ? bodyHeight : scrollHeight;
       styles.maxHeight = maxHeight;
     }
