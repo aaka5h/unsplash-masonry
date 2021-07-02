@@ -4,6 +4,9 @@ import PhotoCard from './Grid/PhotoCard';
 
 const x = 700;
 
+// 500 for landspace
+// for square and portrait: 
+
 export const PhotoDetails = React.forwardRef((props, ref) => {
   const { photo, onClickPhoto: close } = props;
   if (!photo) return null;

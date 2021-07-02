@@ -5,6 +5,7 @@ import { SlugAnimation } from 'components/Animations/SlugAnimation';
 import { withRouter } from 'react-router-dom';
 import { canUseDOM } from 'components/Portal/Portal';
 import memoize from 'memoize-one';
+import classNames from 'classnames';
 
 function getCols(width) {
   // min width style going small to big
@@ -143,7 +144,7 @@ class PhotoGrid extends React.PureComponent {
     const grid = this.getGrid(photos, cols);
 
     const renderCols = grid.map((photos, i) => (
-      <div key={`col-${i}-of-${cols}`}>
+      <div className={classNames(styles['grid-col'])} key={`col-${i}-of-${cols}`}>
         <SlugAnimation keys={(p) => p.photo.id}>
           {photos.map((p) => this.getPhoto(p))}
         </SlugAnimation>

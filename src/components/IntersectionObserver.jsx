@@ -27,22 +27,29 @@ const useIntersectionObserver = ({ root, thresholds = 0, rootMargin }) => {
     },
     [els, observer]
   );
-  React.useEffect(() => {
-    const o = new IntersectionObserver(
-      (entries, ob) => {
-        entries.forEach((entry) => {
-          const inView = entry.isIntersecting;
-          const arr = els.get(entry.target);
-          arr &&
-            arr.forEach((cb) => {
-              cb(inView, entry);
-            });
-        });
-      },
-      { root, thresholds: [thresholds], rootMargin }
-    );
-    setObserver(o);
-  }, [root, thresholds, rootMargin, els]);
+  React.useEffect(
+    () => {
+      // TODO: clean previous intersection observer after new intersection observer is created
+      const o = new IntersectionObserver(
+        (entries, ob) => {
+          entries.forEach((entry) => {
+            const inView =
+              entry.isIntersecting && thresholds.some((t) => t <= entry.intersectionRatio);
+            const arr = els.get(entry.target);
+            arr &&
+              arr.forEach((cb) => {
+                cb(inView, entry);
+              });
+          });
+        },
+        { root, threshold: thresholds, rootMargin }
+      );
+      setObserver(o);
+    },
+    // Settings array as dependency to deps causes re-render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [Array.isArray(thresholds) ? thresholds.toString() : thresholds, root, rootMargin, els]
+  );
 
   return { observeElement, elements: els, observer };
 };
@@ -76,7 +83,7 @@ const useObserver = ({ initialInView }) => {
 };
 
 const IntersectionObserverComponent = function (props) {
-  const { options = { thresholds: [0].toString() }, children } = props;
+  const { options = { thresholds: [0] }, children } = props;
   const o = useIntersectionObserver(options);
   return <ObserverContext.Provider value={o}>{children}</ObserverContext.Provider>;
 };
@@ -152,5 +159,4 @@ export const ObserverComponent2 = (props) => {
   const [ref, inView, entry] = useObserver({ initialInView });
 
   return children({ inView, entry, ref });
-  // return <div></div>
 };

@@ -1,11 +1,24 @@
-@import 'styles/variables';
+@use 'styles/variables';
 
 .photo-grid {
+  --row-gap: 1rem;
+  --col-gap: 1rem;
+
   display: grid;
   grid-template-columns: repeat(var(--columns), 1fr);
   min-height: 100vmin;
+  column-gap: var(--col-gap);
+  align-items: start;
+
+  .photo-card {
+    display: none !important;
+  }
 }
 
+.grid-col {
+  display: grid;
+  row-gap: var(--row-gap);
+}
 .modal-container {
   // width: 100%;
   // height: 100%;
